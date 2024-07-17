@@ -2,11 +2,10 @@ import numpy as np
 from matplotlib.colors import ListedColormap
 import matplotlib.pyplot as plt
 
-
-class AdalineGD(object):
+class LogisticGD(object):
 
     """
-    선형 뉴런 분석기
+    경사하강법을 이용한 로지스틱 선형 회귀 분류기.
 
     매개변수
         eta: float
@@ -45,13 +44,15 @@ class AdalineGD(object):
             errors = (y - output)
             self.w_[1:] += self.eta * X.T.dot(errors)
             self.w_[0] += self.eta * errors.sum()
-            cost = (errors ** 2).sum() / 2.0
+
+            cost = -y.dot(np.log(output)) - (1 - y).dot(np.log(1 - output)) # 제곱합 대신 로지스틱 비용 계산
+
             self.cost_.append(cost)
         return self
     
-    # y = x 꼴의 간단한 선형 활성화 함수
-    def activation(self, X):
-        return X
+    def activation(self, z):
+        # 시그모이드 활성화 함수 
+        return 1. / (1. + np.exp(-np.clip(z, -250, 250)))
 
     def net_input(self, X):
         return np.dot(X, self.w_[1:]) + self.w_[0] # 배열 X, W[1:]의 내적계산 후 편향값 더하기
@@ -61,6 +62,7 @@ class AdalineGD(object):
         # 단위 계단함수를 사용하여 클래쓰 레이블은 만든다.
         return np.where(self.net_input(X) >= 0.0, 1, -1) # 위의 인풋값에 대한 출력값을 매개로 해서, 만약 값이 0보다 크다면 1, 아니면 -1 출력
     
+
 def plot_decision_regions(X, y, classifier, test_idx=None, resolution=0.2):
     markers = ('s', 'x', 'o', '^', 'v')
     colors = ('red', 'blue', 'lightgreen', 'gray', 'cyan')
