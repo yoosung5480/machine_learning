@@ -16,8 +16,8 @@ class SBS():
     def fit(self, X, y):
         X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=self.test_size, random_state=self.random_state)
         dim = X_train.shape[1] # 특성의 개수
-        self.indices_ = tuple(range(dim))
-        self.subsets_ = [self.indices_]
+        self.indices_ = tuple(range(dim)) #현재 선택된 특성의 인덱스 저장
+        self.subsets_ = [self.indices_] # 각단계에서 선택된 특성의 조합 저장.
         score = self._calc_score(X_train, X_test, y_train, y_test, self.indices_)
         self.scores_ = [score]
 
